@@ -44,6 +44,7 @@ namespace InnovatorClientExample
 
         private const string PATH_DELIMITER = "\\";
         private Button button_getToken;
+        private Button button_getUserRest;
         private const string CONFIG_FILE_PATH = @"InnovatorClientExampleConfig.xml";
 
         /// <summary>
@@ -87,6 +88,7 @@ namespace InnovatorClientExample
             this.MethodButton = new System.Windows.Forms.Button();
             this.InfoButton = new System.Windows.Forms.Button();
             this.button_getToken = new System.Windows.Forms.Button();
+            this.button_getUserRest = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ExitButton
@@ -197,10 +199,21 @@ namespace InnovatorClientExample
             this.button_getToken.UseVisualStyleBackColor = true;
             this.button_getToken.Click += new System.EventHandler(this.button_getToken_Click);
             // 
+            // button1
+            // 
+            this.button_getUserRest.Location = new System.Drawing.Point(12, 41);
+            this.button_getUserRest.Name = "button1";
+            this.button_getUserRest.Size = new System.Drawing.Size(96, 23);
+            this.button_getUserRest.TabIndex = 11;
+            this.button_getUserRest.Text = "9. Rest API";
+            this.button_getUserRest.UseVisualStyleBackColor = true;
+            this.button_getUserRest.Click += new System.EventHandler(this.button_getUserRest_Click);
+            // 
             // StartForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
             this.ClientSize = new System.Drawing.Size(914, 475);
+            this.Controls.Add(this.button_getUserRest);
             this.Controls.Add(this.button_getToken);
             this.Controls.Add(this.InfoButton);
             this.Controls.Add(this.MethodButton);
@@ -221,6 +234,8 @@ namespace InnovatorClientExample
 
         }
         #endregion
+
+        public string access_token;
 
         /// <summary>
         /// The main entry point for the application.
@@ -453,9 +468,31 @@ Very simple... click the buttons in sequence to exercise the client code
             IRestResponse response = client.Execute(request);
 
             JObject obj = JObject.Parse(response.Content);
-            string access_token = (string)obj.SelectToken("access_token");
+            //string access_token = (string)obj.SelectToken("access_token");
+
+            access_token = (string)obj.SelectToken("access_token");
+
 
             msgBox.AppendText("\n\nToken = " + access_token);
+        }
+
+        private void button_getUserRest_Click(object sender, EventArgs e)
+        {
+            var client = new RestClient(connectionConfig.Server + "/server/odata/User?$select=first_name,last_name");
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("cache-control", "no-cache");
+            request.AddHeader("Connection", "keep-alive");
+            request.AddHeader("accept-encoding", "gzip, deflate");
+            request.AddHeader("cookie", "ASP.NET_SessionId=4bpjgxs4hyxdvvdyfqtdn3cq");
+            request.AddHeader("Host", "localhost");
+            request.AddHeader("Postman-Token", "e005ae19-9a3c-4ae1-aa64-ace567ae524d,4f175dfb-173c-4322-ab75-00d3081c6ad2");
+            request.AddHeader("Cache-Control", "no-cache");
+            request.AddHeader("Accept", "*/*");
+            request.AddHeader("User-Agent", "PostmanRuntime/7.15.0");
+            request.AddHeader("Authorization", "Bearer " + access_token);
+            IRestResponse response = client.Execute(request);
+
+            msgBox.AppendText("\n\nDone!  --Get odata OK, raw response is :\n" + response.Content);
         }
     }
 }
