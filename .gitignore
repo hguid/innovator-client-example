@@ -12,3 +12,7 @@ BundleArtifacts
 .DS_Store
 *.userprefs
 *.a
+
+InnovatorClientExample/.vs/InnovatorClientExample/v15/Server/sqlite3/
+
+InnovatorClientExample/InnovatorClientExampleConfig.xml
