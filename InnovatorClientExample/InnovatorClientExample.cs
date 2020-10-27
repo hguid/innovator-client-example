@@ -1,6 +1,8 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
+using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace InnovatorClientExample
 {
@@ -41,6 +43,7 @@ namespace InnovatorClientExample
         private System.ComponentModel.Container components = null;
 
         private const string PATH_DELIMITER = "\\";
+        private Button button_getToken;
         private const string CONFIG_FILE_PATH = @"InnovatorClientExampleConfig.xml";
 
         /// <summary>
@@ -83,11 +86,12 @@ namespace InnovatorClientExample
             this.AMLButton = new System.Windows.Forms.Button();
             this.MethodButton = new System.Windows.Forms.Button();
             this.InfoButton = new System.Windows.Forms.Button();
+            this.button_getToken = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(804, 12);
+            this.ExitButton.Location = new System.Drawing.Point(291, 41);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(96, 23);
             this.ExitButton.TabIndex = 0;
@@ -109,9 +113,9 @@ namespace InnovatorClientExample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.msgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.msgBox.Location = new System.Drawing.Point(12, 55);
+            this.msgBox.Location = new System.Drawing.Point(12, 94);
             this.msgBox.Name = "msgBox";
-            this.msgBox.Size = new System.Drawing.Size(888, 303);
+            this.msgBox.Size = new System.Drawing.Size(888, 358);
             this.msgBox.TabIndex = 2;
             this.msgBox.Text = "";
             this.msgBox.TextChanged += new System.EventHandler(this.msgBox_TextChanged);
@@ -136,7 +140,7 @@ namespace InnovatorClientExample
             // 
             // LogoffButton
             // 
-            this.LogoffButton.Location = new System.Drawing.Point(702, 12);
+            this.LogoffButton.Location = new System.Drawing.Point(189, 41);
             this.LogoffButton.Name = "LogoffButton";
             this.LogoffButton.Size = new System.Drawing.Size(96, 23);
             this.LogoffButton.TabIndex = 5;
@@ -183,10 +187,21 @@ namespace InnovatorClientExample
             this.InfoButton.UseVisualStyleBackColor = true;
             this.InfoButton.Click += new System.EventHandler(this.InfoButton_Click);
             // 
+            // button_getToken
+            // 
+            this.button_getToken.Location = new System.Drawing.Point(702, 12);
+            this.button_getToken.Name = "button_getToken";
+            this.button_getToken.Size = new System.Drawing.Size(96, 23);
+            this.button_getToken.TabIndex = 10;
+            this.button_getToken.Text = "8. Get token";
+            this.button_getToken.UseVisualStyleBackColor = true;
+            this.button_getToken.Click += new System.EventHandler(this.button_getToken_Click);
+            // 
             // StartForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(914, 381);
+            this.ClientSize = new System.Drawing.Size(914, 475);
+            this.Controls.Add(this.button_getToken);
             this.Controls.Add(this.InfoButton);
             this.Controls.Add(this.MethodButton);
             this.Controls.Add(this.AMLButton);
@@ -421,6 +436,26 @@ Very simple... click the buttons in sequence to exercise the client code
             msgBox.AppendText("\n   Locale: " + context.GetLocale());
             msgBox.AppendText("\n   Timezone: " + context.GetTimeZone());
             msgBox.AppendText("\n   Database: " + serverConnection.GetDatabaseName());
+        }
+
+        private void button_getToken_Click(object sender, EventArgs e)
+        {
+            var client = new RestClient(connectionConfig.Server + "/OAuthServer/connect/token");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            request.AlwaysMultipartFormData = true;
+            request.AddParameter("grant_type", "password");
+            request.AddParameter("scope", "Innovator");
+            request.AddParameter("client_id", "IOMApp");
+            request.AddParameter("username", connectionConfig.Username);
+            request.AddParameter("password", connectionConfig.Password);
+            request.AddParameter("database", connectionConfig.Database);
+            IRestResponse response = client.Execute(request);
+
+            JObject obj = JObject.Parse(response.Content);
+            string access_token = (string)obj.SelectToken("access_token");
+
+            msgBox.AppendText("\n\nToken = " + access_token);
         }
     }
 }
