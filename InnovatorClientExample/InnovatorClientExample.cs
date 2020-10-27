@@ -45,6 +45,7 @@ namespace InnovatorClientExample
         private const string PATH_DELIMITER = "\\";
         private Button button_getToken;
         private Button button_getUserRest;
+        private Button button1;
         private const string CONFIG_FILE_PATH = @"InnovatorClientExampleConfig.xml";
 
         /// <summary>
@@ -89,11 +90,12 @@ namespace InnovatorClientExample
             this.InfoButton = new System.Windows.Forms.Button();
             this.button_getToken = new System.Windows.Forms.Button();
             this.button_getUserRest = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(806, 41);
+            this.ExitButton.Location = new System.Drawing.Point(1102, 12);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(96, 23);
             this.ExitButton.TabIndex = 0;
@@ -115,9 +117,9 @@ namespace InnovatorClientExample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.msgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.msgBox.Location = new System.Drawing.Point(12, 94);
+            this.msgBox.Location = new System.Drawing.Point(12, 52);
             this.msgBox.Name = "msgBox";
-            this.msgBox.Size = new System.Drawing.Size(888, 358);
+            this.msgBox.Size = new System.Drawing.Size(1183, 411);
             this.msgBox.TabIndex = 2;
             this.msgBox.Text = "";
             this.msgBox.TextChanged += new System.EventHandler(this.msgBox_TextChanged);
@@ -142,11 +144,11 @@ namespace InnovatorClientExample
             // 
             // LogoffButton
             // 
-            this.LogoffButton.Location = new System.Drawing.Point(806, 12);
+            this.LogoffButton.Location = new System.Drawing.Point(1000, 12);
             this.LogoffButton.Name = "LogoffButton";
             this.LogoffButton.Size = new System.Drawing.Size(96, 23);
             this.LogoffButton.TabIndex = 5;
-            this.LogoffButton.Text = "8. Logoff";
+            this.LogoffButton.Text = "11. Logoff";
             this.LogoffButton.Click += new System.EventHandler(this.LogoffButton_Click);
             // 
             // SQLButton
@@ -199,20 +201,31 @@ namespace InnovatorClientExample
             this.button_getToken.UseVisualStyleBackColor = true;
             this.button_getToken.Click += new System.EventHandler(this.button_getToken_Click);
             // 
-            // button1
+            // button_getUserRest
             // 
-            this.button_getUserRest.Location = new System.Drawing.Point(12, 41);
-            this.button_getUserRest.Name = "button1";
+            this.button_getUserRest.Location = new System.Drawing.Point(804, 12);
+            this.button_getUserRest.Name = "button_getUserRest";
             this.button_getUserRest.Size = new System.Drawing.Size(96, 23);
             this.button_getUserRest.TabIndex = 11;
             this.button_getUserRest.Text = "9. Rest API";
             this.button_getUserRest.UseVisualStyleBackColor = true;
             this.button_getUserRest.Click += new System.EventHandler(this.button_getUserRest_Click);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(906, 12);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(88, 23);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "10. SOAP API";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button_getUserSoap_Click);
+            // 
             // StartForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(914, 475);
+            this.ClientSize = new System.Drawing.Size(1209, 475);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.button_getUserRest);
             this.Controls.Add(this.button_getToken);
             this.Controls.Add(this.InfoButton);
@@ -493,6 +506,20 @@ Very simple... click the buttons in sequence to exercise the client code
             IRestResponse response = client.Execute(request);
 
             msgBox.AppendText("\n\nDone!  --Get odata OK, raw response is :\n" + response.Content);
+        }
+
+        private void button_getUserSoap_Click(object sender, EventArgs e)
+        {
+            var client = new RestClient(connectionConfig.Server + "/server/InnovatorServer.aspx");
+            client.Timeout = -1;
+            var request = new RestRequest(Method.POST);
+            request.AddHeader("SOAPAction", "ApplyItem");
+            request.AddHeader("Authorization", "Bearer " + access_token);
+            request.AddHeader("Content-Type", "text/plain");
+            request.AddParameter("text/plain", "<Item type=\"User\" action=\"get\" select=\"first_name,last_name\">\n</Item>", ParameterType.RequestBody);
+            IRestResponse response = client.Execute(request);
+
+            msgBox.AppendText("\n\nDone!  --Get SOAP OK, raw response is :\n" + response.Content);
         }
     }
 }
