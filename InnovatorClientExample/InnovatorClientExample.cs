@@ -91,7 +91,7 @@ namespace InnovatorClientExample
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(291, 41);
+            this.ExitButton.Location = new System.Drawing.Point(806, 41);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(96, 23);
             this.ExitButton.TabIndex = 0;
@@ -140,7 +140,7 @@ namespace InnovatorClientExample
             // 
             // LogoffButton
             // 
-            this.LogoffButton.Location = new System.Drawing.Point(189, 41);
+            this.LogoffButton.Location = new System.Drawing.Point(806, 12);
             this.LogoffButton.Name = "LogoffButton";
             this.LogoffButton.Size = new System.Drawing.Size(96, 23);
             this.LogoffButton.TabIndex = 5;
