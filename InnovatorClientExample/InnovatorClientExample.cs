@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
@@ -12,8 +13,8 @@ namespace InnovatorClientExample
     public class StartForm : Form
     {
         public static XmlDocument ConfigDoc = new XmlDocument();
-        public static string ErrorMsg = "";              
-        
+        public static string ErrorMsg = "";
+
         /// <summary>
         ///  The Configuration definition from the XML config file.
         /// </summary>
@@ -113,8 +114,8 @@ namespace InnovatorClientExample
             // 
             // msgBox
             // 
-            this.msgBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.msgBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.msgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.msgBox.Location = new System.Drawing.Point(12, 52);
@@ -489,6 +490,12 @@ Very simple... click the buttons in sequence to exercise the client code
             msgBox.AppendText("\n\nToken = " + access_token);
         }
 
+        public class User
+        {
+            public string first_name { get; set; }
+            public int last_name { get; set; }
+        }
+
         private void button_getUserRest_Click(object sender, EventArgs e)
         {
             var client = new RestClient(connectionConfig.Server + "/server/odata/User?$select=first_name,last_name");
@@ -505,7 +512,22 @@ Very simple... click the buttons in sequence to exercise the client code
             request.AddHeader("Authorization", "Bearer " + access_token);
             IRestResponse response = client.Execute(request);
 
-            msgBox.AppendText("\n\nDone!  --Get odata OK, raw response is :\n" + response.Content);
+            JObject obj = JObject.Parse(response.Content);
+
+            var values = (JArray)obj["value"];
+
+            msgBox.AppendText("\n\nDone!  --Get REST OK, Users are :\n");
+            int i = 0;
+
+            foreach (JToken value in values)
+            {
+                //Console.WriteLine(value["first_name"].ToString());
+                string first_name = value["first_name"].ToString();
+                string last_name = value["last_name"].ToString();
+                msgBox.AppendText("\n   " + (i+1) + ". " + first_name + " " + last_name);
+                i++;
+            }
+
         }
 
         private void button_getUserSoap_Click(object sender, EventArgs e)
@@ -519,7 +541,30 @@ Very simple... click the buttons in sequence to exercise the client code
             request.AddParameter("text/plain", "<Item type=\"User\" action=\"get\" select=\"first_name,last_name\">\n</Item>", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
 
-            msgBox.AppendText("\n\nDone!  --Get SOAP OK, raw response is :\n" + response.Content);
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(response.Content);
+            var values = doc["Item"];
+
+            XmlNode enveloppe = doc.FirstChild;
+            XmlNode body = enveloppe.FirstChild;
+            XmlNode result = body.FirstChild;
+
+            msgBox.AppendText("\n\nDone!  --Get SOAP OK, Users are :\n");
+
+            if (result.HasChildNodes)
+            {
+                for (int i = 0; i < result.ChildNodes.Count; i++)
+                {
+                    //Console.WriteLine(result.ChildNodes[i].InnerText);
+                    //Console.WriteLine(result.ChildNodes[i]["first_name"].InnerText);
+                    //Console.WriteLine(result.ChildNodes[i]["last_name"].InnerText);
+
+                    string first_name = result.ChildNodes[i]["first_name"].InnerText;
+                    string last_name = result.ChildNodes[i]["last_name"].InnerText;
+                    msgBox.AppendText("\n   " + (i+1) + ". " + first_name + " " + last_name);
+                }
+            }
+           
         }
     }
 }
