@@ -60,6 +60,8 @@ Original code written by Aras Support.
 
 Updated by Alexander Sklyarskiy for Aras Labs.
 
+Updated by Hadrien Guiducci.
+
 ## License
 
 Aras Labs projects are published to Github under the MIT license. See the [LICENSE file](./LICENSE.md) for license rights and limitations.
