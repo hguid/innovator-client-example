@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using System.Xml;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
@@ -12,8 +13,8 @@ namespace InnovatorClientExample
     public class StartForm : Form
     {
         public static XmlDocument ConfigDoc = new XmlDocument();
-        public static string ErrorMsg = "";              
-        
+        public static string ErrorMsg = "";
+
         /// <summary>
         ///  The Configuration definition from the XML config file.
         /// </summary>
@@ -46,6 +47,8 @@ namespace InnovatorClientExample
         private Button button_getToken;
         private Button button_getUserRest;
         private Button button1;
+        private GroupBox groupBox1;
+        private GroupBox groupBox2;
         private const string CONFIG_FILE_PATH = @"InnovatorClientExampleConfig.xml";
 
         /// <summary>
@@ -91,20 +94,24 @@ namespace InnovatorClientExample
             this.button_getToken = new System.Windows.Forms.Button();
             this.button_getUserRest = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // ExitButton
             // 
-            this.ExitButton.Location = new System.Drawing.Point(1102, 12);
+            this.ExitButton.Location = new System.Drawing.Point(1128, 31);
             this.ExitButton.Name = "ExitButton";
             this.ExitButton.Size = new System.Drawing.Size(96, 23);
             this.ExitButton.TabIndex = 0;
-            this.ExitButton.Text = "Exit";
+            this.ExitButton.Text = "12. Exit";
             this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
             // 
             // LoadButton
             // 
-            this.LoadButton.Location = new System.Drawing.Point(12, 12);
+            this.LoadButton.Location = new System.Drawing.Point(12, 31);
             this.LoadButton.Name = "LoadButton";
             this.LoadButton.Size = new System.Drawing.Size(96, 23);
             this.LoadButton.TabIndex = 1;
@@ -117,16 +124,16 @@ namespace InnovatorClientExample
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.msgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.msgBox.Location = new System.Drawing.Point(12, 52);
+            this.msgBox.Location = new System.Drawing.Point(12, 69);
             this.msgBox.Name = "msgBox";
-            this.msgBox.Size = new System.Drawing.Size(1183, 411);
+            this.msgBox.Size = new System.Drawing.Size(1212, 394);
             this.msgBox.TabIndex = 2;
             this.msgBox.Text = "";
             this.msgBox.TextChanged += new System.EventHandler(this.msgBox_TextChanged);
             // 
             // ConnectButton
             // 
-            this.ConnectButton.Location = new System.Drawing.Point(114, 12);
+            this.ConnectButton.Location = new System.Drawing.Point(4, 19);
             this.ConnectButton.Name = "ConnectButton";
             this.ConnectButton.Size = new System.Drawing.Size(96, 23);
             this.ConnectButton.TabIndex = 3;
@@ -135,7 +142,7 @@ namespace InnovatorClientExample
             // 
             // QueryButton
             // 
-            this.QueryButton.Location = new System.Drawing.Point(216, 12);
+            this.QueryButton.Location = new System.Drawing.Point(106, 19);
             this.QueryButton.Name = "QueryButton";
             this.QueryButton.Size = new System.Drawing.Size(88, 23);
             this.QueryButton.TabIndex = 4;
@@ -144,16 +151,16 @@ namespace InnovatorClientExample
             // 
             // LogoffButton
             // 
-            this.LogoffButton.Location = new System.Drawing.Point(1000, 12);
+            this.LogoffButton.Location = new System.Drawing.Point(592, 19);
             this.LogoffButton.Name = "LogoffButton";
             this.LogoffButton.Size = new System.Drawing.Size(96, 23);
             this.LogoffButton.TabIndex = 5;
-            this.LogoffButton.Text = "11. Logoff";
+            this.LogoffButton.Text = "8. Logoff";
             this.LogoffButton.Click += new System.EventHandler(this.LogoffButton_Click);
             // 
             // SQLButton
             // 
-            this.SQLButton.Location = new System.Drawing.Point(310, 12);
+            this.SQLButton.Location = new System.Drawing.Point(200, 19);
             this.SQLButton.Name = "SQLButton";
             this.SQLButton.Size = new System.Drawing.Size(88, 23);
             this.SQLButton.TabIndex = 6;
@@ -163,7 +170,7 @@ namespace InnovatorClientExample
             // 
             // AMLButton
             // 
-            this.AMLButton.Location = new System.Drawing.Point(404, 12);
+            this.AMLButton.Location = new System.Drawing.Point(294, 19);
             this.AMLButton.Name = "AMLButton";
             this.AMLButton.Size = new System.Drawing.Size(88, 23);
             this.AMLButton.TabIndex = 7;
@@ -173,7 +180,7 @@ namespace InnovatorClientExample
             // 
             // MethodButton
             // 
-            this.MethodButton.Location = new System.Drawing.Point(498, 12);
+            this.MethodButton.Location = new System.Drawing.Point(388, 19);
             this.MethodButton.Name = "MethodButton";
             this.MethodButton.Size = new System.Drawing.Size(96, 23);
             this.MethodButton.TabIndex = 8;
@@ -183,7 +190,7 @@ namespace InnovatorClientExample
             // 
             // InfoButton
             // 
-            this.InfoButton.Location = new System.Drawing.Point(600, 12);
+            this.InfoButton.Location = new System.Drawing.Point(490, 19);
             this.InfoButton.Name = "InfoButton";
             this.InfoButton.Size = new System.Drawing.Size(96, 23);
             this.InfoButton.TabIndex = 9;
@@ -193,56 +200,78 @@ namespace InnovatorClientExample
             // 
             // button_getToken
             // 
-            this.button_getToken.Location = new System.Drawing.Point(702, 12);
+            this.button_getToken.Location = new System.Drawing.Point(6, 19);
             this.button_getToken.Name = "button_getToken";
             this.button_getToken.Size = new System.Drawing.Size(96, 23);
             this.button_getToken.TabIndex = 10;
-            this.button_getToken.Text = "8. Get token";
+            this.button_getToken.Text = "9. Get token";
             this.button_getToken.UseVisualStyleBackColor = true;
             this.button_getToken.Click += new System.EventHandler(this.button_getToken_Click);
             // 
             // button_getUserRest
             // 
-            this.button_getUserRest.Location = new System.Drawing.Point(804, 12);
+            this.button_getUserRest.Location = new System.Drawing.Point(108, 19);
             this.button_getUserRest.Name = "button_getUserRest";
             this.button_getUserRest.Size = new System.Drawing.Size(96, 23);
             this.button_getUserRest.TabIndex = 11;
-            this.button_getUserRest.Text = "9. Rest API";
+            this.button_getUserRest.Text = "10. Rest API";
             this.button_getUserRest.UseVisualStyleBackColor = true;
             this.button_getUserRest.Click += new System.EventHandler(this.button_getUserRest_Click);
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(906, 12);
+            this.button1.Location = new System.Drawing.Point(210, 19);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(88, 23);
             this.button1.TabIndex = 12;
-            this.button1.Text = "10. SOAP API";
+            this.button1.Text = "11. SOAP API";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button_getUserSoap_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.InfoButton);
+            this.groupBox1.Controls.Add(this.ConnectButton);
+            this.groupBox1.Controls.Add(this.QueryButton);
+            this.groupBox1.Controls.Add(this.SQLButton);
+            this.groupBox1.Controls.Add(this.LogoffButton);
+            this.groupBox1.Controls.Add(this.AMLButton);
+            this.groupBox1.Controls.Add(this.MethodButton);
+            this.groupBox1.Location = new System.Drawing.Point(114, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(697, 51);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Using IOM.dll";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.button_getToken);
+            this.groupBox2.Controls.Add(this.button1);
+            this.groupBox2.Controls.Add(this.button_getUserRest);
+            this.groupBox2.Location = new System.Drawing.Point(817, 12);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(305, 51);
+            this.groupBox2.TabIndex = 14;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Using API and HTTP calls REST or SOAP ";
             // 
             // StartForm
             // 
             this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-            this.ClientSize = new System.Drawing.Size(1209, 475);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.button_getUserRest);
-            this.Controls.Add(this.button_getToken);
-            this.Controls.Add(this.InfoButton);
-            this.Controls.Add(this.MethodButton);
-            this.Controls.Add(this.AMLButton);
-            this.Controls.Add(this.SQLButton);
-            this.Controls.Add(this.LogoffButton);
-            this.Controls.Add(this.QueryButton);
-            this.Controls.Add(this.ConnectButton);
+            this.ClientSize = new System.Drawing.Size(1238, 475);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.ExitButton);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.msgBox);
             this.Controls.Add(this.LoadButton);
-            this.Controls.Add(this.ExitButton);
             this.Icon = global::InnovatorClientExample.Properties.Resources.Aras;
             this.MinimumSize = new System.Drawing.Size(930, 420);
             this.Name = "StartForm";
             this.Text = "Innovator Client Example Using IOM.DLL";
             this.Load += new System.EventHandler(this.StartForm_Load);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -272,8 +301,11 @@ Very simple... click the buttons in sequence to exercise the client code
 5. AML		-- runs an AML query written by user for User items and displays the result
 6. Method	-- runs the server method VC_IsUserAdmin and displays the result
 7. Show info	-- show info about server locale, timezone
-8. Logoff		-- disconnects from Innovator, releasing all objects.
-9. Exit		-- done with the example,  now open VS and start coding");
+8. Logoff		-- disconnects from Innovator, releasing all objects
+9. Get token	-- get a token from the server
+10. Rest    	-- runs an REST-Odata query for User items and displays the result
+11. SOAP 	-- runs an SOAP query for User items and displays the result
+12. Exit		-- done with the example,  now open VS and start coding");
         }
 
         private void ExitButton_Click(object sender, EventArgs e)
@@ -434,6 +466,31 @@ Very simple... click the buttons in sequence to exercise the client code
 
             return false;
         }
+        private bool CheckErrorToken()
+        {
+            if (connectionConfig == null)
+            {
+                msgBox.AppendText("\n\nConfiguration not loaded -- use button 1 first!");
+                return true;
+            }
+
+            return false;
+        }
+        private bool CheckErrorAPI()
+        {
+            if (connectionConfig == null)
+            {
+                msgBox.AppendText("\n\nConfiguration not loaded -- use button 1 first!");
+                return true;
+            }
+            if (access_token == null)
+            {
+                msgBox.AppendText("\n\nNo token generated -- use button 9 first!");
+                return true;
+            }
+
+            return false;
+        }
 
         private void MethodButton_Click(object sender, EventArgs e)
         {
@@ -468,6 +525,12 @@ Very simple... click the buttons in sequence to exercise the client code
 
         private void button_getToken_Click(object sender, EventArgs e)
         {
+
+            if (CheckErrorToken())
+            {
+                return;
+            }
+
             var client = new RestClient(connectionConfig.Server + "/OAuthServer/connect/token");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
@@ -486,11 +549,25 @@ Very simple... click the buttons in sequence to exercise the client code
             access_token = (string)obj.SelectToken("access_token");
 
 
-            msgBox.AppendText("\n\nToken = " + access_token);
+            msgBox.AppendText("\n\n -- Done ! Your Token is:");
+            msgBox.AppendText("\n token = " + access_token);
+            msgBox.AppendText("\n you can now use the API REST or SOAP");
+        }
+
+        public class User
+        {
+            public string first_name { get; set; }
+            public int last_name { get; set; }
         }
 
         private void button_getUserRest_Click(object sender, EventArgs e)
         {
+
+            if (CheckErrorAPI())
+            {
+                return;
+            }
+
             var client = new RestClient(connectionConfig.Server + "/server/odata/User?$select=first_name,last_name");
             var request = new RestRequest(Method.GET);
             request.AddHeader("cache-control", "no-cache");
@@ -505,11 +582,32 @@ Very simple... click the buttons in sequence to exercise the client code
             request.AddHeader("Authorization", "Bearer " + access_token);
             IRestResponse response = client.Execute(request);
 
-            msgBox.AppendText("\n\nDone!  --Get odata OK, raw response is :\n" + response.Content);
+            JObject obj = JObject.Parse(response.Content);
+
+            var values = (JArray)obj["value"];
+
+            msgBox.AppendText("\n\nDone!  --Get REST OK, Users are :\n");
+            int i = 0;
+
+            foreach (JToken value in values)
+            {
+                //Console.WriteLine(value["first_name"].ToString());
+                string first_name = value["first_name"].ToString();
+                string last_name = value["last_name"].ToString();
+                msgBox.AppendText("\n   " + (i+1) + ". " + first_name + " " + last_name);
+                i++;
+            }
+
         }
 
         private void button_getUserSoap_Click(object sender, EventArgs e)
         {
+
+            if (CheckErrorAPI())
+            {
+                return;
+            }
+
             var client = new RestClient(connectionConfig.Server + "/server/InnovatorServer.aspx");
             client.Timeout = -1;
             var request = new RestRequest(Method.POST);
@@ -519,7 +617,30 @@ Very simple... click the buttons in sequence to exercise the client code
             request.AddParameter("text/plain", "<Item type=\"User\" action=\"get\" select=\"first_name,last_name\">\n</Item>", ParameterType.RequestBody);
             IRestResponse response = client.Execute(request);
 
-            msgBox.AppendText("\n\nDone!  --Get SOAP OK, raw response is :\n" + response.Content);
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(response.Content);
+            var values = doc["Item"];
+
+            XmlNode enveloppe = doc.FirstChild;
+            XmlNode body = enveloppe.FirstChild;
+            XmlNode result = body.FirstChild;
+
+            msgBox.AppendText("\n\nDone!  --Get SOAP OK, Users are :\n");
+
+            if (result.HasChildNodes)
+            {
+                for (int i = 0; i < result.ChildNodes.Count; i++)
+                {
+                    //Console.WriteLine(result.ChildNodes[i].InnerText);
+                    //Console.WriteLine(result.ChildNodes[i]["first_name"].InnerText);
+                    //Console.WriteLine(result.ChildNodes[i]["last_name"].InnerText);
+
+                    string first_name = result.ChildNodes[i]["first_name"].InnerText;
+                    string last_name = result.ChildNodes[i]["last_name"].InnerText;
+                    msgBox.AppendText("\n   " + (i+1) + ". " + first_name + " " + last_name);
+                }
+            }
+           
         }
     }
 }
